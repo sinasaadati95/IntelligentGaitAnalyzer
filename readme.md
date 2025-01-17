@@ -16,5 +16,10 @@ The "OnTheCloud" directory contains our main application, which can be maintaine
 
 In the "ArtificialNeuralNetwork" directory, an interpretable deep learning-based methodology is presented that analyzes motion signals captured by our IoT-based method to detect abnormalities in lower body joints. These projects, developed in Python, can be executed on both local computers and cloud-based servers. 
 
+
+### Gait and Motion Data Availability
+
+The data related to gait and motion captured by the IoT-based method is published in the "ArtificialNeuralNetworks" directory.
+
 ## Author 
 All modules in this project were designed and developed by me, Sina Saadati. For more information, feel free to contact me at "sina.saadati@aut.ac.ir".
