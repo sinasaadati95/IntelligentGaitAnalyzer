@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ANArecorder</title>
+
+
+
+    <style>
+        .collapsible {
+            background-color: green;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+            text-align: center;
+        }
+
+            .active, .collapsible:hover {
+                background-color: red;
+                text-align: center;
+            }
+
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: pink;
+            text-align: center;
+        }
+
+        .button {
+            background-color: #04AA6D;
+            border: none;
+            color: white;
+            padding: 30px 64px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: auto;
+            cursor: pointer;
+            text-align: center;
+        }
+
+
+        h1 {
+            font-size: 110px;
+            color: white;
+            text-align: center;
+        }
+
+        .text {
+            color: white;
+            text-align: center;
+        }
+
+        body {
+            margin: auto;
+            background-color: black;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+    </style>
+
+
+    <audio id="bibSoundStart">
+        <source src="bs.ogg" type="audio/ogg">
+        <source src="bs.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <audio id="bibSoundEnd">
+        <source src="be.ogg" type="audio/ogg">
+        <source src="be.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+</head>
+
+
+<script src="Chart.js"></script>
+<script src="brain.js"></script>
+
+<body onload="init();">
+
+
+    <h1 id="counter">Sina ANAtomyRecorder</h1>
+
+    <button type="button" class="collapsible">Orientation Monitoring</button>
+    <div class="content">
+        <p>In this box, the live orientation of your device is being printed.</p>
+
+        <h3 class="text" id="alphaDemo">Alpha</h3><br />
+        <h3 class="text" id="betaDemo">Beta</h3><br />
+        <h3 class="text" id="gammaDemp">Gamma</h3><br />
+
+    </div>
+
+
+
+    <button type="button" class="collapsible">Stand-By Avoider</button>
+    <div class="content">
+        <p>By playing a video, your device will not stand by.</p>
+
+        <video controls loop>
+            <source src="file.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+
+    <button type="button" class="collapsible">Help</button>
+    <div class="content">
+        <p>Ti record your own movement: 1-Click on the 'Start' button. 2-After that, you have only 10 seconds to place your device in your organ. 3-After 25 seconds, your motion is recorded.</p>
+    </div>
+
+    <button type="button" class="collapsible">About This project</button>
+    <div class="content">
+        <p>This is a scientific project by: Sina Saadati.</p>
+    </div>
+
+
+
+    <br />
+    <br />
+    <button style="border-radius:5px;" class="button" type="button" onclick="start();">Start</button>
+    <br />
+
+
+
+
+
+    <br />
+    <br />
+    <br />
+
+
+
+
+
+    <button id="resultBox" hidden onclick="drawDiagramAplhas()" type="button" class="collapsible">Results</button>
+    <div class="content">
+
+
+
+        <button id="box1" onclick="drawDiagramAplhas()" type="button" class="collapsible">Alpha Diagram</button>
+        <div class="content">
+            <p>In this box, the live orientation of your device is being printed.</p>
+            <canvas id="ChartAlphas" style="width:100%;max-width:600px;margin:auto;"></canvas>
+
+        </div>
+
+        <button id="box2" onclick="drawDiagramBetas();" type="button" class="collapsible">Beta Diagram</button>
+        <div class="content">
+            <p>In this box, the live orientation of your device is being printed.</p>
+            <canvas id="ChartBetas" style="width:100%;max-width:600px;margin:auto;"></canvas>
+
+        </div>
+
+        <button id="box3" onclick="drawDiagramGammas();" type="button" class="collapsible">Gamma Diagram</button>
+        <div class="content">
+            <p>In this box, the live orientation of your device is being printed.</p>
+            <canvas id="ChartGammas" style="width:100%;max-width:600px;margin:auto;"></canvas>
+
+        </div>
+
+
+
+
+        <button id="box4" type="button" class="collapsible">Alpha Values</button>
+        <div class="content">
+
+            <p class="text" id="resultsAlpha"></p>
+
+        </div>
+
+        <button id="box5" type="button" class="collapsible">Beta Values</button>
+        <div class="content">
+
+            <p class="text" id="resultsBeta"></p>
+
+        </div>
+
+        <button id="box6" type="button" class="collapsible">Gamma Values</button>
+        <div class="content">
+
+            <p class="text" id="resultsGamma"></p>
+
+        </div>
+
+
+
+        <button id="box6" type="button" class="collapsible">Summarize RAW data</button>
+        <div class="content">
+
+            <div id="summarizedData"></div>
+
+        </div>
+
+
+        <button id="box6" type="button" class="collapsible">Intelligent Doctor</button>
+        <div class="content">
+
+            <div id="detectiondemo">To analyze the data using artificial intelligence methods, please use golden account. </div>
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <script>
+
+        function init() {
+            window.addEventListener('deviceorientation', function (event) {
+                document.getElementById("alphaDemo").innerHTML = "Alpha = " + event.alpha;
+                document.getElementById("betaDemo").innerHTML = "Beta = " + event.beta;
+                document.getElementById("gammaDemp").innerHTML = "Gamma = " + event.gamma;
+            });
+
+            window.addEventListener('deviceorientation', eventHandler);
+
+            var coll = document.getElementsByClassName("collapsible");
+            var i;
+
+            for (i = 0; i < coll.length; i++) {
+                coll[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    var content = this.nextElementSibling;
+                    if (content.style.display === "block") {
+                        content.style.display = "none";
+                    } else {
+                        content.style.display = "block";
+                    }
+                });
+            }
+
+        }
+
+
+
+        let alphaDS = [];
+        let betaDS = [];
+        let gammaDS = [];
+
+
+        function start() {
+            count10();
+            window.setTimeout(count9, 1000);
+            window.setTimeout(count8, 2000);
+            window.setTimeout(count7, 3000);
+            window.setTimeout(count6, 4000);
+            window.setTimeout(count5, 5000);
+            window.setTimeout(count4, 6000);
+            window.setTimeout(count3, 7000);
+            window.setTimeout(count2, 8000);
+            window.setTimeout(count1, 9000);
+
+            window.setTimeout(startRecording, 10000);
+            window.setTimeout(stop, 23000);
+        }
+
+        recorder = false;
+
+        function startRecording() {
+
+            alphaDS = [];
+            betaDS = [];
+            gammaDS = [];
+
+            var x = document.getElementById("bibSoundStart");
+            x.play();
+
+            recorder = true;
+            document.getElementById("counter").innerHTML = "Sina ANAtomyRecorder";
+        }
+
+
+        function stop() {
+            recorder = false;
+            printResults();
+            document.getElementById("resultBox").hidden = false;
+
+            var x = document.getElementById("bibSoundEnd");
+            x.play();
+        }
+
+
+
+
+        function eventHandler(event) {
+            if (recorder) {
+                alphaDS.push(event.alpha);
+                betaDS.push(event.beta);
+                gammaDS.push(event.gamma);
+            }
+        }
+
+
+
+        function count1() {
+            document.getElementById("counter").innerHTML = "1";
+        }
+
+        function count2() {
+            document.getElementById("counter").innerHTML = "2";
+        }
+
+        function count3() {
+            document.getElementById("counter").innerHTML = "3";
+        }
+
+        function count4() {
+            document.getElementById("counter").innerHTML = "4";
+        }
+
+        function count5() {
+            document.getElementById("counter").innerHTML = "5";
+        }
+
+        function count6() {
+            document.getElementById("counter").innerHTML = "6";
+        }
+
+        function count7() {
+            document.getElementById("counter").innerHTML = "7";
+        }
+
+        function count8() {
+            document.getElementById("counter").innerHTML = "8";
+        }
+
+        function count9() {
+            document.getElementById("counter").innerHTML = "9";
+        }
+
+        function count10() {
+            document.getElementById("counter").innerHTML = "10";
+        }
+
+        function count0() {
+            document.getElementById("counter").innerHTML = " ";
+        }
+
+
+
+        function printResults() {
+            printAlphaResults();
+            printBetaResults();
+            printGammaResults();
+
+            summarizeRawData();
+
+        }
+
+
+        function summarizeRawData(){
+            raw1 = getMatrixOfSummarizeRawData();
+            ttext = "Result = " ; 
+            for (k = 0 ; k < raw1.length ; k++) {
+                 ttext += raw1[k] + " , " ; 
+            }
+
+            document.getElementById("summarizedData").innerHTML = ttext ; 
+        }
+
+
+
+
+        function getMatrixOfSummarizeRawData() {
+            raw1 = filter1();
+            return raw1 ; 
+        }
+
+
+
+        function filter1(){
+                q = filter2();
+                size = q.length ; 
+                wwww = [] ; 
+
+                for(u = 0 ; u < 20 ; u++){
+                      wwww.push(q[Math.round((u/20)*size)]);
+                }
+
+                return wwww;
+
+        }
+
+
+
+
+
+        function filter2() {
+            arr = [] ; 
+            r = 0;
+            for (i = 1 ; i < betaDS.length; i++) {
+                if (betaDS[i - 1] < 90 && betaDS[i] > 90) {
+                    r = r + 1;
+                }
+                if(r == 3){
+                            arr.push(betaDS[i]);
+                }
+            }
+            return arr;
+        }
+
+
+
+
+
+
+        function printAlphaResults() {
+            results = 'Alpha = [ ';
+            for (i = 0 ; i < alphaDS.length - 1 ; i++) {
+                results += alphaDS[i] + ' , \n';
+            }
+            results += alphaDS[alphaDS.length - 1] + ' ] \n\n\n';
+            document.getElementById("resultsAlpha").innerHTML = results;
+        }
+
+
+        function printBetaResults() {
+            results = 'Beta = [ ';
+            for (i = 0 ; i < alphaDS.length - 1 ; i++) {
+                results += betaDS[i] + ' , \n';
+            }
+            results += betaDS[alphaDS.length - 1] + ' ] \n';
+            document.getElementById("resultsBeta").innerHTML = results;
+        }
+
+
+        function printGammaResults() {
+            results = 'Gamma = [ ';
+            for (i = 0 ; i < alphaDS.length - 1 ; i++) {
+                results += gammaDS[i] + ' , \n';
+            }
+            results += gammaDS[alphaDS.length - 1] + ' ] \n';
+            document.getElementById("resultsGamma").innerHTML = results;
+        }
+
+
+
+        function drawDiagramAplhas() {
+
+            xValues = makeXs(alphaDS.length);
+
+            new Chart("ChartAlphas", {
+                type: "line",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        data: alphaDS,
+                        borderColor: "red",
+                        fill: false
+                    }]
+                },
+                options: {
+                    legend: { display: false }
+                }
+            });
+        }
+
+
+
+        function drawDiagramBetas() {
+
+            xValues = makeXs(betaDS.length);
+
+            new Chart("ChartBetas", {
+                type: "line",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        data: betaDS,
+                        borderColor: "blue",
+                        fill: false
+                    }]
+                },
+                options: {
+                    legend: { display: false }
+                }
+            });
+        }
+
+
+
+        function drawDiagramGammas() {
+
+            xValues = makeXs(gammaDS.length);
+
+            new Chart("ChartGammas", {
+                type: "line",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        data: gammaDS,
+                        borderColor: "green",
+                        fill: false
+                    }]
+                },
+                options: {
+                    legend: { display: false }
+                }
+            });
+        }
+
+
+        function makeXs(len) {
+            r = [];
+            for (i = 0 ; i < len ; i++) {
+                r.push(i);
+            }
+            return r;
+        }
+
+
+
+
+        function minimum() {
+            r = betaDS[0];
+            for (i = 0 ; i < betaDS.length; i++) {
+                if (betaDS[i] < r) {
+                    r = betaDS[i];
+                }
+            }
+            return r;
+        }
+
+
+
+        function maximum() {
+            r = betaDS[0];
+            for (i = 0 ; i < betaDS.length; i++) {
+                if (betaDS[i] > r) {
+                    r = betaDS[i];
+                }
+            }
+            return r;
+        }
+
+
+        function stepCounter() {
+            r = 0;
+            for (i = 1 ; i < betaDS.length; i++) {
+                if (betaDS[i - 1] < 90 && betaDS[i] > 90) {
+                    r = r + 1;
+                }
+            }
+            return r;
+        }
+
+
+
+    </script>
+
+</body>
+</html>
